@@ -292,6 +292,35 @@
   color: var(--text-soft);
 }
 
+.prompt-textarea[aria-invalid='true'] {
+  border-color: #a84c3d;
+}
+
+.prompt-meta {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+  align-items: baseline;
+  gap: 12px;
+  font-size: 0.85rem;
+}
+
+.prompt-error {
+  margin-right: auto;
+  color: #6b3d34;
+  font-weight: 600;
+}
+
+.prompt-counter {
+  color: var(--text-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+.prompt-counter.is-over {
+  color: #a84c3d;
+  font-weight: 700;
+}
+
 .btn-generate {
   height: 56px;
   padding: 0 26px;

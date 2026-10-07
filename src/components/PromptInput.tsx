@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { MAX_PROMPT_LENGTH, validatePromptLength } from '../utils/validatePrompt';
 
 interface PromptInputProps {
   onGenerate: (prompt: string) => void;
@@ -16,10 +17,11 @@ const EXAMPLES = [
 
 export function PromptInput({ onGenerate, isLoading }: PromptInputProps) {
   const [prompt, setPrompt] = useState('');
+  const validation = validatePromptLength(prompt);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (prompt.trim() && !isLoading) {
+    if (prompt.trim() && validation.valid && !isLoading) {
       onGenerate(prompt.trim());
     }
   };
@@ -40,6 +42,7 @@ export function PromptInput({ onGenerate, isLoading }: PromptInputProps) {
           onChange={(e) => setPrompt(e.target.value)}
           placeholder="예: 고객 목록 테이블 위에 들어갈 검색 필터 바를 만들어줘. 상태, 담당자, 날짜 범위 필터가 필요해."
           className="prompt-textarea"
+          aria-invalid={!validation.valid}
           rows={3}
           onKeyDown={(e) => {
             if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
@@ -50,7 +53,7 @@ export function PromptInput({ onGenerate, isLoading }: PromptInputProps) {
         <button
           type="submit"
           className="btn-generate"
-          disabled={!prompt.trim() || isLoading}
+          disabled={!prompt.trim() || !validation.valid || isLoading}
         >
           {isLoading ? (
             <span className="loading-spinner">생성 중...</span>
@@ -58,6 +61,18 @@ export function PromptInput({ onGenerate, isLoading }: PromptInputProps) {
             '컴포넌트 생성'
           )}
         </button>
+        <div className="prompt-meta">
+          {validation.error && (
+            <p role="alert" className="prompt-error">
+              {validation.error}
+            </p>
+          )}
+          <span
+            className={`prompt-counter${validation.valid ? '' : ' is-over'}`}
+          >
+            {validation.length}/{MAX_PROMPT_LENGTH}
+          </span>
+        </div>
       </form>
       <div className="prompt-examples">
         <span className="examples-label">예시 프롬프트</span>
